@@ -1,7 +1,9 @@
 from langchain.llms import GooglePalm
 from langchain.utilities import SQLDatabase
 from langchain_experimental.sql import SQLDatabaseChain
+
 from info import Info
+from few_shots import few_shots
 
 info = Info()
 
@@ -22,4 +24,21 @@ db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
 # test query
 qns1 = db_chain("How many t-shirts do we have left for nike in extra small size and white color?")
 
-qns2 = db_chain.run("How much is the price of the inventory for all small size t-shirts?")
+# qns2 = db_chain.run("How much is the price of the inventory for all small size t-shirts?")
+qns2 = db_chain.run("SELECT SUM(price*stock_quantity) FROM t_shirts WHERE size = 'S'")
+
+# qns3 = db_chain.run("If we have to sell all the Levi’s T-shirts today with discounts applied. How much revenue our store will generate (post discounts)?")
+
+sql_code = """
+select sum(a.total_amount * ((100-COALESCE(discounts.pct_discount,0))/100)) as total_revenue from
+(select sum(price*stock_quantity) as total_amount, t_shirt_id from t_shirts where brand = 'Levi'
+group by t_shirt_id) a left join discounts on a.t_shirt_id = discounts.t_shirt_id
+ """
+
+qns3 = db_chain.run(sql_code)
+
+qns4 = db_chain.run("SELECT SUM(price * stock_quantity) FROM t_shirts WHERE brand = 'Levi'")
+
+qns5 = db_chain.run("How many white color Levi's t shirts we have available?")
+
+qns5 = db_chain.run("SELECT sum(stock_quantity) FROM t_shirts WHERE brand = 'Levi' AND color = 'White'")
