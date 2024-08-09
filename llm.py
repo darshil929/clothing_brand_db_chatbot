@@ -92,3 +92,13 @@ example_prompt = PromptTemplate(
 )
 
 print(_mysql_prompt)
+
+few_shot_prompt = FewShotPromptTemplate(
+    example_selector=example_selector,
+    example_prompt=example_prompt,
+    prefix=mysql_prompt,
+    suffix=PROMPT_SUFFIX,
+    input_variables=["input", "table_info", "top_k"], #These variables are used in the prefix and suffix
+)
+
+new_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True, prompt=few_shot_prompt)
