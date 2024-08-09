@@ -102,3 +102,10 @@ few_shot_prompt = FewShotPromptTemplate(
 )
 
 new_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True, prompt=few_shot_prompt)
+
+new_chain("How many white color Levi's shirt I have?")
+new_chain("How much is the price of the inventory for all small size t-shirts?")
+new_chain("How much is the price of all white color levi t shirts?")
+new_chain("If we have to sell all the Nike’s T-shirts today with discounts applied. How much revenue  our store will generate (post discounts)?")
+new_chain("If we have to sell all the Van Heuson T-shirts today with discounts applied. How much revenue  our store will generate (post discounts)?")
+new_chain.run('How much revenue  our store will generate by selling all Van Heuson TShirts without discount?')
